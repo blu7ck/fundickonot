@@ -5,20 +5,42 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import java.net.URL;
 
 public class Main extends Application {
+
+    private double x=0;
+    private double y=0;
+
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        URL fxmlUrl = getClass().getResource("/views/main_layout.fxml");
-        if (fxmlUrl == null) {
-            throw new IllegalStateException("FXML dosyası bulunamadı!");
-        }
-        Parent root = FXMLLoader.load(fxmlUrl);
-        Scene scene = new Scene(root, 1000, 600);
-        primaryStage.setTitle("Not Tutma Uygulaması");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    public void start(Stage stage) throws Exception {
+        Parent root = FXMLLoader.load (getClass().getResource("/views/main_layout.fxml"));
+
+        Scene scene = new Scene(root);
+
+        root.setOnMousePressed(event -> {
+            x = event.getSceneX();
+            y = event.getSceneY();
+        });
+
+        root.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - x);
+            stage.setY(event.getScreenY() - y);
+
+            stage.setOpacity(.8);
+        });
+
+        root.setOnMouseReleased(event -> {
+            stage.setOpacity(1);
+        });
+
+        stage.initStyle(StageStyle.TRANSPARENT);
+
+        stage.setScene(scene);
+        stage.show();
+
     }
 
     public static void main(String[] args) {
