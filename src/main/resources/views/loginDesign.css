@@ -1,5 +1,5 @@
 .left-form{
-    -fx-background-color:linear-gradient(to bottom right, #485460, #808e9b);
+    -fx-background-color:linear-gradient(to bottom right, #132E35,  #2D4A53, #69818D);
     -fx-border-color: #000;
     -fx-border-width: .4px 0px .4px .4px ;
 }
@@ -14,10 +14,9 @@
     -fx-background-color: transparent;
 
 }
-
-
 .close:hover{
-    -fx-effect: dropshadow(gaussian, #ff4d00, 10, 0.5, 0, 0);}
+    -fx-effect: dropshadow(gaussian, #a10059, 1, 0.5, 0, 0);}
+
 
 .text-field{
     -fx-background-color: linear-gradient(to bottom, #efefef, #eee);

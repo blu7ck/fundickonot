@@ -1,5 +1,7 @@
 package com.blu4ck.fundickonot;
 
+import com.gluonhq.charm.glisten.control.Icon;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -9,25 +11,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
     @FXML
-    private Button close;
-
-    @FXML
     private Button loginBtn;
-
-    @FXML
-    private AnchorPane main_form;
 
     @FXML
     private PasswordField password;
@@ -35,62 +33,79 @@ public class MainController implements Initializable {
     @FXML
     private TextField username;
 
+    @FXML
+    private Icon close;
 
-//       DATABASE TOOLS
+    // DATABASE TOOLS
     private Connection connect;
-    private  PreparedStatement prepare;
-    private  ResultSet result;
+    private PreparedStatement prepare;
+    private ResultSet result;
 
-    public void loginAdmin(){
+    @FXML
+    private void loginAdmin(ActionEvent event) {
+        // SQL sorgusu
+        String sql = "SELECT * FROM user WHERE username = ? AND password = ?";
 
-        String sql = "select * from user where username=? and password=?";
+        // Giriş alanlarının boş olup olmadığını kontrol et
+        if (username.getText().isEmpty() || password.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Hata Mesajı", null, "Kullanıcı adı veya şifre boş olamaz!");
+            return;
+        }
 
-        connect = Database.connectionDb();
-
-        try{
-            prepare= connect.prepareStatement(sql);
+        try {
+            connect = Database.connectionDb();
+            prepare = connect.prepareStatement(sql);
             prepare.setString(1, username.getText());
             prepare.setString(2, password.getText());
-
             result = prepare.executeQuery();
-            Alert alert;
-            if(username.getText().isEmpty()||password.getText().isEmpty()){
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Username or Password is empty");
-            }else {
-                if (result.next()) {
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Login Successful");
 
-                    loginBtn.getScene().getWindow().hide();
-                    Parent root = FXMLLoader.load(getClass().getResource(""));
-                    Stage  stage = new Stage();
-                    Scene  scene = new Scene(root);
-                    stage.setScene(scene);
-                    stage.show();
+            if (result.next()) {
+                showAlert(Alert.AlertType.INFORMATION, "Bilgi Mesajı", null, "Giriş Başarılı!");
 
-                }else  {
-                    alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Username or Password is wrong");
-                }
+                // Yeni pencereyi yükle (dashboard.fxml örnek dosya adı, kendi dosya yolunuza göre düzenleyin)
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/src/main/resources/views/dashboard.fxmldashboard.fxml")));
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.show();
+
+                // Mevcut pencereyi kapat
+                Stage currentStage = (Stage) loginBtn.getScene().getWindow();
+                currentStage.close();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Hata Mesajı", null, "Kullanıcı adı veya şifre hatalı!");
             }
-        } catch (Exception e) {e.printStackTrace();}
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Hata", null, "Bir hata oluştu: " + e.getMessage());
+        } finally {
+            // Kaynakların kapatılması
+            try {
+                if (result != null) result.close();
+                if (prepare != null) prepare.close();
+                if (connect != null) connect.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
-
-    public void close(){
-        System.exit(0);
+    @FXML
+    private void handleCloseAction(MouseEvent event) {
+        Stage stage = (Stage) close.getScene().getWindow();
+        stage.close();
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL location, ResourceBundle resources) {
+        // Başlangıç işlemleri veya olay dinleyici eklemeleri burada yapılabilir.
+    }
 
+    // Kullanıcıya alert mesajı göstermek için yardımcı metod
+    private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

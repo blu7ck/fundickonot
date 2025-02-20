@@ -1,0 +1,22 @@
+.close {
+    -fx-background-color: transparent;
+
+}
+.close:hover{
+    -fx-effect: dropshadow(gaussian, #a10059, 1, 0.5, 0, 0);}
+
+
+/*.fscreen {*/
+/*    -fx-background-color: transparent;*/
+
+/*}*/
+/*.fscreen:hover{*/
+/*    -fx-effect: dropshadow(gaussian, #ff9a03, 10, 0.5, 0, 0);}*/
+
+
+/*.minimize {*/
+/*    -fx-background-color: transparent;*/
+
+/*}*/
+/*.minimize:hover{*/
+/*    -fx-effect: dropshadow(gaussian, #c400bf, 10, 0.5, 0, 0);}*/
