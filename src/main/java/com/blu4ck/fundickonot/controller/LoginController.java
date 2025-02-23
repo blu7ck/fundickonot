@@ -1,5 +1,6 @@
-package com.blu4ck.fundickonot;
+package com.blu4ck.fundickonot.controller;
 
+import com.blu4ck.fundickonot.data.Database;
 import com.gluonhq.charm.glisten.control.Icon;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,26 +16,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class MainController implements Initializable {
+public class LoginController implements Initializable {
 
-    @FXML
-    private Button loginBtn;
-
-    @FXML
-    private PasswordField password;
-
-    @FXML
-    private TextField username;
-
-    @FXML
-    private Icon close;
+    @FXML private Button loginBtn;
+    @FXML private PasswordField password;
+    @FXML private TextField username;
+    @FXML private Icon close;
 
     // DATABASE TOOLS
     private Connection connect;
@@ -43,17 +34,15 @@ public class MainController implements Initializable {
 
     @FXML
     private void loginAdmin(ActionEvent event) {
-        // SQL sorgusu
         String sql = "SELECT * FROM user WHERE username = ? AND password = ?";
 
-        // Giriş alanlarının boş olup olmadığını kontrol et
         if (username.getText().isEmpty() || password.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Hata Mesajı", null, "Kullanıcı adı veya şifre boş olamaz!");
             return;
         }
 
         try {
-            connect = Database.connectionDb();
+            connect = Database.connection();
             prepare = connect.prepareStatement(sql);
             prepare.setString(1, username.getText());
             prepare.setString(2, password.getText());
@@ -62,13 +51,11 @@ public class MainController implements Initializable {
             if (result.next()) {
                 showAlert(Alert.AlertType.INFORMATION, "Bilgi Mesajı", null, "Giriş Başarılı!");
 
-                // Yeni pencereyi yükle (dashboard.fxml örnek dosya adı, kendi dosya yolunuza göre düzenleyin)
-                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/src/main/resources/views/dashboard.fxmldashboard.fxml")));
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/app/app.fxml")));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
                 stage.show();
 
-                // Mevcut pencereyi kapat
                 Stage currentStage = (Stage) loginBtn.getScene().getWindow();
                 currentStage.close();
             } else {
@@ -78,7 +65,6 @@ public class MainController implements Initializable {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Hata", null, "Bir hata oluştu: " + e.getMessage());
         } finally {
-            // Kaynakların kapatılması
             try {
                 if (result != null) result.close();
                 if (prepare != null) prepare.close();
@@ -96,11 +82,8 @@ public class MainController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Başlangıç işlemleri veya olay dinleyici eklemeleri burada yapılabilir.
-    }
+    public void initialize(URL location, ResourceBundle resources) { }
 
-    // Kullanıcıya alert mesajı göstermek için yardımcı metod
     private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

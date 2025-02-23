@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="dialogGrid" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blu4ck.fundickonot.controller.CreateController">
+    <children>
+        <Label text="Yeni Not Oluştur" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+        <!-- Başlık Girişi -->
+        <HBox spacing="10">
+            <Label text="Başlık:"/>
+            <TextField fx:id="titleField" promptText="Not başlığı" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- Klasör Seçimi ve Yeni Klasör Ekleme -->
+        <HBox spacing="10">
+            <Label text="Klasör:"/>
+            <ComboBox fx:id="folderCombo" prefWidth="150"/>
+            <Button fx:id="newFolderButton" text="Yeni Klasör"/>
+        </HBox>
+
+        <!-- Alt Klasör Seçimi -->
+        <HBox spacing="10">
+            <Label text="Alt Klasör:"/>
+            <ComboBox fx:id="subFolderCombo" prefWidth="150"/>
+        </HBox>
+
+        <!-- Not Tipi Seçimi -->
+        <HBox spacing="10">
+            <Label text="Not Tipi:"/>
+            <ComboBox fx:id="noteTypeCombo" prefWidth="150"/>
+        </HBox>
+
+        <!-- Resim Ekleme Alanı -->
+        <HBox fx:id="imageButtonContainer" spacing="10">
+            <Button fx:id="addImageButton" text="Resim Ekle"/>
+            <Label fx:id="imageFileLabel" text="Seçili resim yok"/>
+        </HBox>
+
+        <!-- Not İçeriği -->
+        <Label text="İçerik:"/>
+        <TextArea fx:id="contentArea" promptText="Not içeriği" prefRowCount="5"/>
+
+        <!-- Harf Filtreleme -->
+        <HBox spacing="10">
+            <Label text="Harf Filtrele:"/>
+            <ComboBox fx:id="letterCombo" prefWidth="100"/>
+        </HBox>
+    </children>
+</VBox>

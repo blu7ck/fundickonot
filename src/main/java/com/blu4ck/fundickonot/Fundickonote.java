@@ -1,5 +1,6 @@
 package com.blu4ck.fundickonot;
 
+import com.blu4ck.fundickonot.data.Database;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,17 +8,17 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.net.URL;
+import java.io.IOException;
 
-public class Main extends Application {
+public class Fundickonote extends Application {
 
-    private double x=0;
-    private double y=0;
+    private double x = 0;
+    private double y = 0;
 
     @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load (getClass().getResource("/views/main_layout.fxml"));
+    public void start(Stage stage) throws IOException {
 
+        Parent root = FXMLLoader.load(getClass().getResource("/views/login/login.fxml"));
         Scene scene = new Scene(root);
 
         root.setOnMousePressed(event -> {
@@ -28,19 +29,14 @@ public class Main extends Application {
         root.setOnMouseDragged(event -> {
             stage.setX(event.getScreenX() - x);
             stage.setY(event.getScreenY() - y);
-
-            stage.setOpacity(.8);
+            stage.setOpacity(0.85);
         });
 
-        root.setOnMouseReleased(event -> {
-            stage.setOpacity(1);
-        });
+        root.setOnMouseReleased(event -> stage.setOpacity(1));
 
         stage.initStyle(StageStyle.TRANSPARENT);
-
         stage.setScene(scene);
         stage.show();
-
     }
 
     public static void main(String[] args) {

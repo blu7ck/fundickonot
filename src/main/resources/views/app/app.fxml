@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blu4ck.fundickonot.controller.AppController">
+
+   <right>
+      <VBox fx:id="noteDetailsPanel" spacing="10" prefWidth="300" style="-fx-padding: 10;" visible="false">
+         <Label text="Not Detayları" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+         <Label fx:id="noteTitle" text="Başlık"/>
+         <TextArea fx:id="noteContent" editable="false" wrapText="true" prefHeight="200"/>
+         <ImageView fx:id="noteImage" fitWidth="250" preserveRatio="true"/>
+         <Button fx:id="saveButton" text="Kaydet"/>
+      </VBox>
+   </right>
+
+
+
+   <top>
+      <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: #f0f0f0;">
+         <Button fx:id="createNoteButton" text="Not Oluştur"/>
+         <Button fx:id="editNoteButton" text="Not Düzenle"/>
+         <Button fx:id="deleteNoteButton" text="Not Sil"/>
+         <Button fx:id="deleteFolderButton" text="Klasör Sil"/>
+      </HBox>
+   </top>
+
+   <left>
+      <VBox spacing="10" prefWidth="200" style="-fx-padding: 10;">
+         <Label text="Klasörler" style="-fx-font-weight: bold;"/>
+         <ComboBox fx:id="folderComboBox" prefWidth="180" />
+         <Label text="Alt Klasörler" style="-fx-font-weight: bold;"/>
+         <ComboBox fx:id="subFolderComboBox" prefWidth="180" />
+         <Label text="Ara:"/>
+         <TextField fx:id="searchField" promptText="Not ara" />
+      </VBox>
+   </left>
+
+   <center>
+      <ScrollPane fitToWidth="true">
+         <content>
+            <TilePane fx:id="notesGrid" hgap="10" vgap="10" style="-fx-padding: 10;"/>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
