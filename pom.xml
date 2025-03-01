@@ -83,7 +83,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.blu4ck.fundickonot.Fundickonote</mainClass>
+                            <mainClass>com.blu4ck.fundickonot.Fundickonot</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

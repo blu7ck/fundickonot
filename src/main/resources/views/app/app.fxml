@@ -1,58 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import com.gluonhq.charm.glisten.control.Icon?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blu4ck.fundickonot.controller.AppController">
-
-   <right>
-      <VBox fx:id="noteDetailsPanel" spacing="10" prefWidth="300" style="-fx-padding: 10;" visible="false">
-         <Label text="Not Detayları" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-         <Label fx:id="noteTitle" text="Başlık"/>
-         <TextArea fx:id="noteContent" editable="false" wrapText="true" prefHeight="200"/>
-         <ImageView fx:id="noteImage" fitWidth="250" preserveRatio="true"/>
-         <Button fx:id="saveButton" text="Kaydet"/>
-      </VBox>
-   </right>
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" style="-fx-background-color: #2c2f38;" stylesheets="@app_design.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blu4ck.fundickonot.controller.AppController">
+   <children>
 
 
+      <!-- Dark Mode -->
+      <ToggleButton fx:id="mode" layoutX="1030.0" onAction="#toggleMode" style="-fx-background-color: transparent;">
+         <graphic>
+            <Icon content="TOLL" />
+         </graphic>
+      </ToggleButton>
+      <!-- Pencere Kontrolleri -->
+      <Button fx:id="minimizeButton" layoutX="580.0" mnemonicParsing="false" onAction="#minimize" style="-fx-background-color: transparent;">
+         <graphic>
+            <Icon content="PANORAMA_FISH_EYE" />
+         </graphic>
+      </Button>
+      <Button fx:id="closeButton" layoutX="550.0" mnemonicParsing="false" onAction="#close" style="-fx-background-color: transparent;">
+         <graphic>
+            <Icon content="CLOSE" />
+         </graphic>
+      </Button>
+      <Button fx:id="fullscreenButton" layoutX="520.0" mnemonicParsing="false" onAction="#fullscreen" style="-fx-background-color: transparent;">
+         <graphic>
+            <Icon content="PANORAMA_FISH_EYE" />
+         </graphic>
+      </Button>
 
-   <top>
-      <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: #f0f0f0;">
-         <Button fx:id="createNoteButton" text="Not Oluştur"/>
-         <Button fx:id="editNoteButton" text="Not Düzenle"/>
-         <Button fx:id="deleteNoteButton" text="Not Sil"/>
-         <Button fx:id="deleteFolderButton" text="Klasör Sil"/>
-      </HBox>
-   </top>
+      <Accordion fx:id="notesAccordion" layoutX="20" layoutY="150" prefHeight="400.0" prefWidth="600.0" />
 
-   <left>
-      <VBox spacing="10" prefWidth="200" style="-fx-padding: 10;">
-         <Label text="Klasörler" style="-fx-font-weight: bold;"/>
-         <ComboBox fx:id="folderComboBox" prefWidth="180" />
-         <Label text="Alt Klasörler" style="-fx-font-weight: bold;"/>
-         <ComboBox fx:id="subFolderComboBox" prefWidth="180" />
-         <Label text="Ara:"/>
-         <TextField fx:id="searchField" promptText="Not ara" />
-      </VBox>
-   </left>
 
-   <center>
-      <ScrollPane fitToWidth="true">
-         <content>
-            <TilePane fx:id="notesGrid" hgap="10" vgap="10" style="-fx-padding: 10;"/>
-         </content>
-      </ScrollPane>
-   </center>
-</BorderPane>
+      <!-- Arama Çubuğu -->
+      <TextField fx:id="searchField" layoutX="12.0" layoutY="40.0" onKeyReleased="#handleSearch" prefWidth="1070.0" promptText="SEARCH">
+         <font>
+            <Font name="Tahoma" size="12.0" />
+         </font>
+      </TextField>
+
+      <!-- Klasör ve Alt Klasör Seçimi -->
+      <ComboBox fx:id="folderComboBox" layoutX="939.0" layoutY="80.0" onAction="#onFolderSelected" prefWidth="150.0" />
+      <ComboBox fx:id="subFolderComboBox" layoutX="869.0" layoutY="80.0" onAction="#onSubFolderSelected" prefWidth="61.0" />
+
+      <!-- Not Ekle Butonu -->
+      <Button fx:id="createNoteButton" layoutY="1.0" onAction="#openCreateDialog" style="-fx-background-color: transparent;">
+         <font>
+            <Font name="Yu Gothic UI Bold" size="18.0" />
+         </font>
+         <graphic>
+            <Icon content="ADD" />
+         </graphic>
+      </Button>
+
+      <!-- Düzenle Butonu -->
+      <Button fx:id="editBtn" layoutX="54.0" onAction="#editNote" style="-fx-background-color: transparent;">
+         <graphic>
+            <Icon content="EDIT" prefWidth="40.0" />
+         </graphic>
+      </Button>
+
+      <Line endX="978.9" layoutX="110.0" layoutY="119.0" startX="-100.0" style="-fx-stroke: black;" />
+
+      <!-- Notlar Bölgesi -->
+      <AnchorPane layoutX="9.0" layoutY="126.0" prefHeight="463.0" prefWidth="1080.0" style="-fx-background-color: #ffffff; -fx-border-color: #cccccc; -fx-border-radius: 5;">
+         <children>
+            <VBox VBox.vgrow="ALWAYS">
+               <Accordion fx:id="folderAccordion" layoutY="10.0" prefHeight="459.0" prefWidth="1080.0" />
+            </VBox>         </children>
+      </AnchorPane>
+
+   </children>
+</AnchorPane>

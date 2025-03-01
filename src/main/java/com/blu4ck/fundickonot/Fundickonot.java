@@ -1,6 +1,10 @@
 package com.blu4ck.fundickonot;
 
-import com.blu4ck.fundickonot.data.Database;
+import com.blu4ck.fundickonot.data.*;
+import com.blu4ck.fundickonot.model.Folder;
+import com.blu4ck.fundickonot.model.Note;
+import com.blu4ck.fundickonot.model.SubFolder;
+import com.blu4ck.fundickonot.model.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,8 +13,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.util.List;
 
-public class Fundickonote extends Application {
+public class Fundickonot extends Application {
 
     private double x = 0;
     private double y = 0;
@@ -40,6 +45,10 @@ public class Fundickonote extends Application {
     }
 
     public static void main(String[] args) {
+        Database.initializeDatabase();
+        UserDatabase.createUsersTable();
+        UserDatabase.ensureDefaultUser();
         launch(args);
+
     }
 }

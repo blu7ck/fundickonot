@@ -34,7 +34,7 @@ public class LoginController implements Initializable {
 
     @FXML
     private void loginAdmin(ActionEvent event) {
-        String sql = "SELECT * FROM user WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
         if (username.getText().isEmpty() || password.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Hata Mesajı", null, "Kullanıcı adı veya şifre boş olamaz!");
@@ -42,7 +42,7 @@ public class LoginController implements Initializable {
         }
 
         try {
-            connect = Database.connection();
+            connect = Database.connect();
             prepare = connect.prepareStatement(sql);
             prepare.setString(1, username.getText());
             prepare.setString(2, password.getText());

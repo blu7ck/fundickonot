@@ -1,62 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
-<VBox fx:id="dialogGrid" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blu4ck.fundickonot.controller.CreateController">
-    <children>
-        <Label text="Yeni Not Oluştur" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+<AnchorPane fx:id="dialogGrid" prefHeight="215.0" prefWidth="590.0"
+      style="-fx-background-color: lightgray;"
+      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.blu4ck.fundickonot.controller.CreateController">
 
-        <!-- Başlık Girişi -->
-        <HBox spacing="10">
-            <Label text="Başlık:"/>
-            <TextField fx:id="titleField" promptText="Not başlığı" HBox.hgrow="ALWAYS"/>
-        </HBox>
+         <children>
 
-        <!-- Klasör Seçimi ve Yeni Klasör Ekleme -->
-        <HBox spacing="10">
-            <Label text="Klasör:"/>
-            <ComboBox fx:id="folderCombo" prefWidth="150"/>
-            <Button fx:id="newFolderButton" text="Yeni Klasör"/>
-        </HBox>
+              <!-- Divider Line -->
+              <Line endX="517.0" endY="218.0" layoutX="-2.0" layoutY="-5.0" startX="517.0" startY="7.0" stroke="gray" />
 
-        <!-- Alt Klasör Seçimi -->
-        <HBox spacing="10">
-            <Label text="Alt Klasör:"/>
-            <ComboBox fx:id="subFolderCombo" prefWidth="150"/>
-        </HBox>
+              <!-- Folder & Subfolder Selection -->
+              <ComboBox fx:id="folderComboBox" layoutX="268.0" layoutY="15.0" onAction="#onFolderSelected" prefHeight="27.0" prefWidth="115.0" promptText="Klasör Seç" />
+              <ComboBox fx:id="subFolderComboBox" layoutX="398.0" layoutY="15.0" onAction="#onSubFolderSelected" prefHeight="27.0" prefWidth="62.0" promptText="X" />
 
-        <!-- Not Tipi Seçimi -->
-        <HBox spacing="10">
-            <Label text="Not Tipi:"/>
-            <ComboBox fx:id="noteTypeCombo" prefWidth="150"/>
-        </HBox>
+              <!-- Title Field -->
+              <TextField fx:id="noteTitleField" layoutX="24.0" layoutY="15.0" prefHeight="26.0" prefWidth="244.0" promptText="Not Başlığı" />
 
-        <!-- Resim Ekleme Alanı -->
-        <HBox fx:id="imageButtonContainer" spacing="10">
-            <Button fx:id="addImageButton" text="Resim Ekle"/>
-            <Label fx:id="imageFileLabel" text="Seçili resim yok"/>
-        </HBox>
+              <!-- Content Area -->
+              <TextArea fx:id="noteContentArea" layoutX="15.0" layoutY="40.0" prefHeight="175.0" prefWidth="500.0" promptText="Not İçeriği" wrapText="true" />
 
-        <!-- Not İçeriği -->
-        <Label text="İçerik:"/>
-        <TextArea fx:id="contentArea" promptText="Not içeriği" prefRowCount="5"/>
+              <!-- Image Upload Section -->
+              <Button fx:id="uploadImageButton" layoutX="420.0" layoutY="168.0" onAction="#handleImageUpload" text="Resim Ekle" />
 
-        <!-- Harf Filtreleme -->
-        <HBox spacing="10">
-            <Label text="Harf Filtrele:"/>
-            <ComboBox fx:id="letterCombo" prefWidth="100"/>
-        </HBox>
-    </children>
-</VBox>
+              <!-- Save Button -->
+              <Button layoutX="524.0" layoutY="13.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="20.0" onAction="#handleSaveNote" prefHeight="30.0" prefWidth="20.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text=" ✔" />
+            <Button fx:id="createFolderBtn" layoutX="524.0" layoutY="53.0" minHeight="12.0" minWidth="39.0" onAction="#createFolder" prefHeight="30.0" prefWidth="54.0" text="+">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+            <Button fx:id="cancel" layoutX="524.0" layoutY="168.0" minHeight="12.0" minWidth="39.0" onAction="#cancel" prefHeight="30.0" prefWidth="54.0" style="-fx-background-color: #df0139;" text="X">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
