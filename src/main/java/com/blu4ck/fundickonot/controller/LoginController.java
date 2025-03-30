@@ -51,7 +51,7 @@ public class LoginController implements Initializable {
             if (result.next()) {
                 showAlert(Alert.AlertType.INFORMATION, "Bilgi Mesajı", null, "Giriş Başarılı!");
 
-                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/app/app.fxml")));
+                Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/app/newApp.fxml")));
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
                 stage.show();

@@ -8,23 +8,32 @@ import java.util.List;
 
 public class NoteDatabase {
 
-        public static List<Note> getAllNotes() {
-        List<Note> notes = new ArrayList<>();
-        String sql = "SELECT * FROM Note ORDER BY createdAt DESC"; // En yeni notlar önce gelsin
+    public static boolean addNote(String title, String content, String imagePath, String folderType) {
+        String sql = "INSERT INTO Note (title, content, imagePath, folderType, createdAt) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
 
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = Database.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            pstmt.setString(2, content);
+            pstmt.setString(3, imagePath);
+            pstmt.setString(4, folderType);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Not eklenirken hata oluştu: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static List<Note> getAllNotes(String folderType) {
+        List<Note> notes = new ArrayList<>();
+        String sql = "SELECT * FROM Note WHERE folderType = ? ORDER BY createdAt DESC";
+
+        try (Connection conn = Database.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, folderType);
+            ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                notes.add(new Note(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getString("content"),
-                        rs.getInt("subFolder_id"),
-                        rs.getTimestamp("createdAt").toLocalDateTime(),
-                        rs.getString("imagePath")
-                ));
+                notes.add(mapNoteFromResultSet(rs));
             }
         } catch (SQLException e) {
             System.out.println("Notlar getirilirken hata oluştu: " + e.getMessage());
@@ -32,35 +41,54 @@ public class NoteDatabase {
         return notes;
     }
 
-
-
-    public static List<Note> getNotesBySubFolderId(int subFolderId) {
+    public static List<Note> searchNotes(String query, String folderType) {
         List<Note> notes = new ArrayList<>();
-        String sql = "SELECT * FROM Note WHERE subFolder_id = ? ORDER BY createdAt DESC";
+        String sql = "SELECT * FROM Note WHERE folderType = ? AND (title LIKE ? OR content LIKE ?) ORDER BY createdAt DESC";
+
+        try (Connection conn = Database.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, folderType);
+            pstmt.setString(2, "%" + query + "%");
+            pstmt.setString(3, "%" + query + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                notes.add(mapNoteFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.out.println("Not araması sırasında hata oluştu: " + e.getMessage());
+        }
+        return notes;
+    }
+
+    private static Note mapNoteFromResultSet(ResultSet rs) throws SQLException {
+        return new Note(
+                rs.getInt("id"),
+                rs.getString("title"),
+                rs.getString("content"),
+                rs.getString("imagePath"),
+                rs.getTimestamp("createdAt").toLocalDateTime(),
+                rs.getString("folderType")
+        );
+    }
+    public static boolean updateNote(Note note) {
+        String sql = "UPDATE Note SET title = ?, content = ?, imagePath = ?, folderType = ? WHERE id = ?";
 
         try (Connection conn = Database.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, subFolderId);
-            ResultSet rs = pstmt.executeQuery();
+            pstmt.setString(1, note.getTitle());
+            pstmt.setString(2, note.getContent());
+            pstmt.setString(3, note.getImagePath());
+            pstmt.setString(4, note.getFolderType());
+            pstmt.setInt(5, note.getId());
 
-            while (rs.next()) {
-                notes.add(new Note(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getString("content"),
-                        rs.getInt("subFolder_id"),
-                        rs.getTimestamp("createdAt").toLocalDateTime(),
-                        rs.getString("imagePath")
-                ));
-            }
+            pstmt.executeUpdate();
+            return true;
         } catch (SQLException e) {
-            System.out.println("Notlar getirilirken hata oluştu: " + e.getMessage());
+            System.out.println("Not güncellenirken hata oluştu: " + e.getMessage());
+            return false;
         }
-        return notes;
     }
-
-
 
     public static boolean deleteNote(int noteId) {
         String sql = "DELETE FROM Note WHERE id = ?";
@@ -76,74 +104,5 @@ public class NoteDatabase {
             return false;
         }
     }
-
-
-    public static List<Note> searchNotes(String query) {
-        List<Note> notes = new ArrayList<>();
-        String sql = "SELECT * FROM Note WHERE title LIKE ? OR content LIKE ? ORDER BY createdAt DESC";
-
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, "%" + query + "%"); // Başlıkta ara
-            pstmt.setString(2, "%" + query + "%"); // İçerikte ara
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                notes.add(new Note(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getString("content"),
-                        rs.getInt("subFolder_id"),
-                        rs.getTimestamp("createdAt").toLocalDateTime(),
-                        rs.getString("imagePath")
-                ));
-            }
-        } catch (SQLException e) {
-            System.out.println("Not araması sırasında hata oluştu: " + e.getMessage());
-        }
-        return notes;
-    }
-
-
-    public static boolean addNote(String title, String content, int subFolderId, String imagePath) {
-        String sql = "INSERT INTO Note (title, content, subFolder_id, imagePath) VALUES (?, ?, ?, ?)";
-
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, title);
-            pstmt.setString(2, content);
-            pstmt.setInt(3, subFolderId);
-            pstmt.setString(4, imagePath);
-
-            pstmt.executeUpdate();
-            return true; // Başarıyla eklendi
-        } catch (SQLException e) {
-            System.out.println("Not eklenirken hata oluştu: " + e.getMessage());
-            return false; // Hata varsa eklenmediğini döndür
-        }
-    }
-
-
-    public static boolean updateNote(Note note) {
-        String sql = "UPDATE Note SET title = ?, content = ?, imagePath = ? WHERE id = ?";
-
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, note.getTitle());
-            pstmt.setString(2, note.getContent());
-            pstmt.setString(3, note.getImagePath());
-            pstmt.setInt(4, note.getId());
-
-            pstmt.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Not güncellenirken hata oluştu: " + e.getMessage());
-            return false;
-        }
-    }
-
 
 }

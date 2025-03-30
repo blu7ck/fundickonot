@@ -1,0 +1,9 @@
+.root {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #f5f5f5;
+}
+
+.text-area, .text-field, .list-view {
+    -fx-background-color: #2e2e2e;
+    -fx-text-fill: white;
+}

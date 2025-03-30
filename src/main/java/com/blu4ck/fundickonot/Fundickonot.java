@@ -1,10 +1,7 @@
 package com.blu4ck.fundickonot;
 
-import com.blu4ck.fundickonot.data.*;
-import com.blu4ck.fundickonot.model.Folder;
-import com.blu4ck.fundickonot.model.Note;
-import com.blu4ck.fundickonot.model.SubFolder;
-import com.blu4ck.fundickonot.model.User;
+import com.blu4ck.fundickonot.data.Database;
+import com.blu4ck.fundickonot.data.UserDatabase;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,18 +9,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.IOException;
-import java.util.List;
-
 public class Fundickonot extends Application {
 
     private double x = 0;
     private double y = 0;
 
     @Override
-    public void start(Stage stage) throws IOException {
-
+    public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/views/login/login.fxml"));
+
         Scene scene = new Scene(root);
 
         root.setOnMousePressed(event -> {
@@ -41,14 +35,14 @@ public class Fundickonot extends Application {
 
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setScene(scene);
+        stage.setTitle("Fundickonot - Giriş");
         stage.show();
     }
 
     public static void main(String[] args) {
-        Database.initializeDatabase();
-        UserDatabase.createUsersTable();
-        UserDatabase.ensureDefaultUser();
+        Database.initializeDatabase();        // not ve klasör tabloları
+        UserDatabase.createUsersTable();      // kullanıcı tablosu
+        UserDatabase.ensureDefaultUser();     // default admin
         launch(args);
-
     }
 }

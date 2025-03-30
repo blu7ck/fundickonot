@@ -8,10 +8,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="dialogGrid" prefHeight="215.0" prefWidth="590.0"
-      style="-fx-background-color: lightgray;"
-      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.blu4ck.fundickonot.controller.CreateController">
+<AnchorPane fx:id="dialogGrid" prefHeight="215.0" prefWidth="590.0" style="-fx-background-color: lightgray;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blu4ck.fundickonot.controller.CreateController">
 
          <children>
 
@@ -19,28 +16,28 @@
               <Line endX="517.0" endY="218.0" layoutX="-2.0" layoutY="-5.0" startX="517.0" startY="7.0" stroke="gray" />
 
               <!-- Folder & Subfolder Selection -->
-              <ComboBox fx:id="folderComboBox" layoutX="268.0" layoutY="15.0" onAction="#onFolderSelected" prefHeight="27.0" prefWidth="115.0" promptText="Klasör Seç" />
-              <ComboBox fx:id="subFolderComboBox" layoutX="398.0" layoutY="15.0" onAction="#onSubFolderSelected" prefHeight="27.0" prefWidth="62.0" promptText="X" />
+              <ComboBox fx:id="folderComboBox" layoutX="400.0" layoutY="15.0" onAction="#onFolderSelected" prefHeight="27.0" prefWidth="99.0" promptText="Kategori" />
 
               <!-- Title Field -->
-              <TextField fx:id="noteTitleField" layoutX="24.0" layoutY="15.0" prefHeight="26.0" prefWidth="244.0" promptText="Not Başlığı" />
+              <TextField fx:id="noteTitleField" layoutX="24.0" layoutY="15.0" prefHeight="26.0" prefWidth="370.0" promptText="Not Başlığı" />
 
               <!-- Content Area -->
               <TextArea fx:id="noteContentArea" layoutX="15.0" layoutY="40.0" prefHeight="175.0" prefWidth="500.0" promptText="Not İçeriği" wrapText="true" />
 
               <!-- Image Upload Section -->
-              <Button fx:id="uploadImageButton" layoutX="420.0" layoutY="168.0" onAction="#handleImageUpload" text="Resim Ekle" />
+              <Button fx:id="uploadImageButton" layoutX="420.0" layoutY="168.0" onAction="#handleImageUpload" prefHeight="30.0" prefWidth="83.0" text="Resim Ekle">
+         <font>
+            <Font size="16.0" />
+         </font></Button>
 
               <!-- Save Button -->
-              <Button layoutX="524.0" layoutY="13.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="20.0" onAction="#handleSaveNote" prefHeight="30.0" prefWidth="20.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text=" ✔" />
-            <Button fx:id="createFolderBtn" layoutX="524.0" layoutY="53.0" minHeight="12.0" minWidth="39.0" onAction="#createFolder" prefHeight="30.0" prefWidth="54.0" text="+">
+              <Button fx:id="saveButton" layoutX="524.0" layoutY="13.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="30.0" minWidth="20.0" onAction="#handleSaveNote" prefHeight="30.0" prefWidth="20.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="✔">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Button>
+            <Button fx:id="cancel" layoutX="524.0" layoutY="168.0" minHeight="12.0" minWidth="39.0" onAction="#cancel" prefHeight="30.0" prefWidth="54.0" style="-fx-background-color: #df0139;" text="🚮" textFill="WHITE">
                <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Button>
-            <Button fx:id="cancel" layoutX="524.0" layoutY="168.0" minHeight="12.0" minWidth="39.0" onAction="#cancel" prefHeight="30.0" prefWidth="54.0" style="-fx-background-color: #df0139;" text="X">
-               <font>
-                  <Font name="System Bold" size="16.0" />
+                  <Font size="18.0" />
                </font>
             </Button>
          </children>
