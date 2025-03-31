@@ -4,6 +4,6 @@
 }
 
 .text-area, .text-field, .list-view {
-    -fx-background-color: #2e2e2e;
+    -fx-background-color: black;
     -fx-text-fill: white;
 }

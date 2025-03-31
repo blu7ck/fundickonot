@@ -67,6 +67,7 @@
 
     <build>
         <plugins>
+            <!-- Java derleme ayarları -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -75,6 +76,8 @@
                     <release>23</release>
                 </configuration>
             </plugin>
+
+            <!-- JavaFX plugin -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -94,6 +97,22 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- JAR dosyasına Main-Class manifest bilgisi ekler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.blu4ck.fundickonot.Fundickonot</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
+
 </project>
