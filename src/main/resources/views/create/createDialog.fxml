@@ -8,20 +8,20 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="dialogGrid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blu4ck.fundickonot.controller.CreateController">
-   <children>
-      <TextField fx:id="noteTitleField" layoutX="14.0" layoutY="14.0" promptText="Başlık" />
-      <TextArea fx:id="noteContentArea" layoutX="14.0" layoutY="48.0" prefHeight="240.0" prefWidth="320.0" promptText="Not içeriği..." />
-      <ComboBox fx:id="folderComboBox" layoutX="182.0" layoutY="14.0" onAction="#onFolderSelected" prefWidth="150.0" promptText="Kategori" />
-      <Button fx:id="saveButton" layoutX="14.0" layoutY="297.0" mnemonicParsing="false" onAction="#handleSaveNote" text="✅">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Button>
-      <Button fx:id="cancel" layoutX="297.0" layoutY="297.0" mnemonicParsing="false" onAction="#cancel" text="🚮">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Button>
-      <Button fx:id="uploadImageButton" layoutX="244.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleImageUpload" text="Resim Ekle" />
-   </children>
+    <children>
+        <TextField fx:id="noteTitleField" layoutX="14.0" layoutY="14.0" promptText="Başlık" />
+        <TextArea fx:id="noteContentArea" layoutX="14.0" layoutY="48.0" prefHeight="240.0" prefWidth="320.0" promptText="Not içeriği..." />
+        <ComboBox fx:id="folderComboBox" layoutX="182.0" layoutY="14.0" onAction="#onFolderSelected" prefWidth="150.0" promptText="Kategori" />
+        <Button fx:id="saveButton" layoutX="14.0" layoutY="297.0" mnemonicParsing="false" onAction="#handleSaveNote" text="✅">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Button>
+        <Button fx:id="cancel" layoutX="297.0" layoutY="297.0" mnemonicParsing="false" onAction="#cancel" text="🚮">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Button>
+        <Button fx:id="uploadImageButton" layoutX="244.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleImageUpload" text="Resim Ekle" />
+    </children>
 </AnchorPane>

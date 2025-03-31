@@ -23,11 +23,7 @@
             <version>3.41.2.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.gluonhq</groupId>
-            <artifactId>charm-glisten</artifactId>
-            <version>6.2.3</version>
-        </dependency>
+
 
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -73,11 +69,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <release>23</release>
+                    <release>17</release>
                 </configuration>
             </plugin>
 
-            <!-- JavaFX plugin -->
+            <!-- JavaFX jlink işlemleri için -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -85,34 +81,26 @@
                 <executions>
                     <execution>
                         <id>default-cli</id>
-                        <configuration>
-                            <mainClass>com.blu4ck.fundickonot.Fundickonot</mainClass>
-                            <launcher>app</launcher>
-                            <jlinkZipName>app</jlinkZipName>
-                            <jlinkImageName>app</jlinkImageName>
-                            <noManPages>true</noManPages>
-                            <stripDebug>true</stripDebug>
-                            <noHeaderFiles>true</noHeaderFiles>
-                        </configuration>
+                        <goals>
+                            <goal>jlink</goal>
+                        </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- JAR dosyasına Main-Class manifest bilgisi ekler -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.blu4ck.fundickonot.Fundickonot</mainClass>
-                        </manifest>
-                    </archive>
+                    <mainClass>com.blu4ck.fundickonot.Fundickonot</mainClass>
+                    <launcher>fundicko</launcher>
+                    <jlinkImageName>fundicko-app</jlinkImageName>
+                    <jlinkZipName>fundicko-app</jlinkZipName>
+                    <stripDebug>true</stripDebug>
+                    <noManPages>true</noManPages>
+                    <noHeaderFiles>true</noHeaderFiles>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
+
+
+
+
 
 </project>

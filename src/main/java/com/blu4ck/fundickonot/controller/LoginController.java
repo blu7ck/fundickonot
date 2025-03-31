@@ -1,7 +1,6 @@
 package com.blu4ck.fundickonot.controller;
 
 import com.blu4ck.fundickonot.data.Database;
-import com.gluonhq.charm.glisten.control.Icon;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +24,7 @@ public class LoginController implements Initializable {
     @FXML private Button loginBtn;
     @FXML private PasswordField password;
     @FXML private TextField username;
-    @FXML private Icon close;
+    @FXML private Button close;
 
     // DATABASE TOOLS
     private Connection connect;
