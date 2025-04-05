@@ -1,10 +1,13 @@
 package com.blu4ck.fundickonot.controller;
 
 import com.blu4ck.fundickonot.data.NoteDatabase;
+import com.blu4ck.fundickonot.model.OttomanLetterCategory;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -19,20 +22,33 @@ public class CreateController {
     @FXML private TextField noteTitleField;
     @FXML private Button saveButton;
     @FXML private Button uploadImageButton;
+    @FXML private ComboBox<OttomanLetterCategory> letterCategoryComboBox;
+    @FXML private HBox categoryBox;
 
-    private String selectedFolderType = "notes";  // default
+    private String selectedFolderType = "notes"; // varsayılan
     private String imagePath = null;
 
     @FXML
     public void initialize() {
+        // ComboBox'a sadece iki seçenek ekliyoruz
         folderComboBox.getItems().addAll("notes", "words");
         folderComboBox.getSelectionModel().selectFirst();
         selectedFolderType = folderComboBox.getValue();
-    }
 
-    @FXML
-    void onFolderSelected(ActionEvent event) {
-        selectedFolderType = folderComboBox.getValue();
+        // Osmanlı harflerini ekle
+        letterCategoryComboBox.setItems(FXCollections.observableArrayList(OttomanLetterCategory.values()));
+
+        // Başlangıçta kategori kutusu gizli
+        categoryBox.setVisible(false);
+        categoryBox.setManaged(false);
+
+        folderComboBox.setOnAction(event -> {
+            selectedFolderType = folderComboBox.getValue();
+            boolean isWords = selectedFolderType.equals("words");
+
+            categoryBox.setVisible(isWords);
+            categoryBox.setManaged(isWords);
+        });
     }
 
     @FXML
@@ -45,7 +61,19 @@ public class CreateController {
             return;
         }
 
-        boolean success = NoteDatabase.addNote(title, content, imagePath, selectedFolderType);
+        boolean success = false;
+
+        if (selectedFolderType.equals("words")) {
+            OttomanLetterCategory selectedCategory = letterCategoryComboBox.getValue();
+            if (selectedCategory == null) {
+                showAlert("Osmanlı harf kategorisini seçmelisiniz.");
+                return;
+            }
+            success = NoteDatabase.addNote(title, content, imagePath, "words", selectedCategory.name());
+
+        } else {
+            success = NoteDatabase.addNote(title, content, imagePath, "notes");
+        }
 
         if (success) {
             closeWindow();

@@ -9,13 +9,18 @@ import java.util.List;
 public class NoteDatabase {
 
     public static boolean addNote(String title, String content, String imagePath, String folderType) {
-        String sql = "INSERT INTO Note (title, content, imagePath, folderType, createdAt) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
+        return addNote(title, content, imagePath, folderType, null);
+    }
+
+    public static boolean addNote(String title, String content, String imagePath, String folderType, String category) {
+        String sql = "INSERT INTO Note (title, content, imagePath, folderType, category, createdAt) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
 
         try (Connection conn = Database.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, title);
             pstmt.setString(2, content);
             pstmt.setString(3, imagePath);
             pstmt.setString(4, folderType);
+            pstmt.setString(5, category);
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -67,11 +72,13 @@ public class NoteDatabase {
                 rs.getString("content"),
                 rs.getString("imagePath"),
                 rs.getTimestamp("createdAt").toLocalDateTime(),
-                rs.getString("folderType")
+                rs.getString("folderType"),
+                rs.getString("category") // yeni alan eklendi
         );
     }
+
     public static boolean updateNote(Note note) {
-        String sql = "UPDATE Note SET title = ?, content = ?, imagePath = ?, folderType = ? WHERE id = ?";
+        String sql = "UPDATE Note SET title = ?, content = ?, imagePath = ?, folderType = ?, category = ? WHERE id = ?";
 
         try (Connection conn = Database.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -80,7 +87,8 @@ public class NoteDatabase {
             pstmt.setString(2, note.getContent());
             pstmt.setString(3, note.getImagePath());
             pstmt.setString(4, note.getFolderType());
-            pstmt.setInt(5, note.getId());
+            pstmt.setString(5, note.getCategory());
+            pstmt.setInt(6, note.getId());
 
             pstmt.executeUpdate();
             return true;
@@ -104,5 +112,4 @@ public class NoteDatabase {
             return false;
         }
     }
-
 }

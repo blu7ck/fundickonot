@@ -5,13 +5,19 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="dialogGrid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.blu4ck.fundickonot.controller.CreateController">
     <children>
+        <HBox fx:id="categoryBox" layoutX="123.0" layoutY="303.0" prefHeight="27.0" prefWidth="104.0" spacing="10">
+            <ComboBox fx:id="letterCategoryComboBox" prefHeight="27.0" prefWidth="99.0" promptText="Harf Seç" />
+        </HBox>
+
         <TextField fx:id="noteTitleField" layoutX="14.0" layoutY="14.0" promptText="Başlık" />
         <TextArea fx:id="noteContentArea" layoutX="14.0" layoutY="48.0" prefHeight="240.0" prefWidth="320.0" promptText="Not içeriği..." />
-        <ComboBox fx:id="folderComboBox" layoutX="182.0" layoutY="14.0" onAction="#onFolderSelected" prefWidth="150.0" promptText="Kategori" />
+        <ComboBox fx:id="folderComboBox" layoutX="182.0" layoutY="14.0"  prefWidth="150.0" promptText="Kategori" />
+
         <Button fx:id="saveButton" layoutX="14.0" layoutY="297.0" mnemonicParsing="false" onAction="#handleSaveNote" text="✅">
             <font>
                 <Font size="18.0" />

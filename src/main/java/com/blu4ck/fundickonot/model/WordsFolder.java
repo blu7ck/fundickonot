@@ -1,15 +1,23 @@
 package com.blu4ck.fundickonot.model;
 
-import java.util.List;
-
 public class WordsFolder {
     private int id;               // Benzersiz Folder ID
     private String name;          // Klasör Adı
+    private OttomanLetterCategory category;
 
     // Constructor
-    public WordsFolder(int id, String name) {
+    public WordsFolder(int id, String name, OttomanLetterCategory category) {
         this.id = id;
         this.name = name;
+        this.category = category;
+    }
+
+    public OttomanLetterCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(OttomanLetterCategory category) {
+        this.category = category;
     }
 
     // Getter ve Setter Metodları

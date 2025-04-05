@@ -1,5 +1,6 @@
 package com.blu4ck.fundickonot.data;
 
+import com.blu4ck.fundickonot.model.OttomanLetterCategory;
 import com.blu4ck.fundickonot.model.WordsFolder;
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,7 +17,8 @@ public class WordsFolderDatabase {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                folders.add(new WordsFolder(rs.getInt("id"), rs.getString("name")));
+                OttomanLetterCategory category = OttomanLetterCategory.valueOf(rs.getString("category"));
+                folders.add(new WordsFolder(rs.getInt("id"), rs.getString("name"), category));
             }
         } catch (SQLException e) {
             System.out.println("WordsFolder verileri alınamadı: " + e.getMessage());
