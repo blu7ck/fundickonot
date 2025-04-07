@@ -1,7 +1,5 @@
 package com.blu4ck.fundickonot;
 
-import com.blu4ck.fundickonot.data.Database;
-import com.blu4ck.fundickonot.data.UserDatabase;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +14,7 @@ public class Fundickonot extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/views/login/login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/views/login/Register_Login.fxml"));
 
         Scene scene = new Scene(root);
 
@@ -40,9 +38,7 @@ public class Fundickonot extends Application {
     }
 
     public static void main(String[] args) {
-        Database.initializeDatabase();        // not ve klasör tabloları
-        UserDatabase.createUsersTable();      // kullanıcı tablosu
-        UserDatabase.ensureDefaultUser();     // default admin
+        // Supabase entegrasyonu tamamlandı, yerel veritabanı başlatılmıyor.
         launch(args);
     }
 }

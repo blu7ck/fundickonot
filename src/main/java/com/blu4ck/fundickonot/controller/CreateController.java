@@ -1,7 +1,8 @@
 package com.blu4ck.fundickonot.controller;
 
-import com.blu4ck.fundickonot.data.NoteDatabase;
+import com.blu4ck.fundickonot.model.Note;
 import com.blu4ck.fundickonot.model.OttomanLetterCategory;
+import com.blu4ck.fundickonot.remote.NoteService;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,27 +26,27 @@ public class CreateController {
     @FXML private ComboBox<OttomanLetterCategory> letterCategoryComboBox;
     @FXML private HBox categoryBox;
 
-    private String selectedFolderType = "notes"; // varsayılan
+    private String selectedFolderType = "notes";
     private String imagePath = null;
+    private String accessToken; // 🔐
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     @FXML
     public void initialize() {
-        // ComboBox'a sadece iki seçenek ekliyoruz
         folderComboBox.getItems().addAll("notes", "words");
         folderComboBox.getSelectionModel().selectFirst();
         selectedFolderType = folderComboBox.getValue();
 
-        // Osmanlı harflerini ekle
         letterCategoryComboBox.setItems(FXCollections.observableArrayList(OttomanLetterCategory.values()));
-
-        // Başlangıçta kategori kutusu gizli
         categoryBox.setVisible(false);
         categoryBox.setManaged(false);
 
         folderComboBox.setOnAction(event -> {
             selectedFolderType = folderComboBox.getValue();
             boolean isWords = selectedFolderType.equals("words");
-
             categoryBox.setVisible(isWords);
             categoryBox.setManaged(isWords);
         });
@@ -61,7 +62,11 @@ public class CreateController {
             return;
         }
 
-        boolean success = false;
+        Note note = new Note();
+        note.setTitle(title);
+        note.setContent(content);
+        note.setImageUrl(imagePath);
+        note.setFolderType(selectedFolderType);
 
         if (selectedFolderType.equals("words")) {
             OttomanLetterCategory selectedCategory = letterCategoryComboBox.getValue();
@@ -69,11 +74,10 @@ public class CreateController {
                 showAlert("Osmanlı harf kategorisini seçmelisiniz.");
                 return;
             }
-            success = NoteDatabase.addNote(title, content, imagePath, "words", selectedCategory.name());
-
-        } else {
-            success = NoteDatabase.addNote(title, content, imagePath, "notes");
+            note.setCategory(selectedCategory.name());
         }
+
+        boolean success = NoteService.createNote(note, accessToken); // 🔑 accessToken ile istek
 
         if (success) {
             closeWindow();
