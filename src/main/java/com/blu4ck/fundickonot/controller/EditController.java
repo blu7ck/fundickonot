@@ -1,117 +1,110 @@
 package com.blu4ck.fundickonot.controller;
 
-import com.blu4ck.fundickonot.data.NoteDatabase;
 import com.blu4ck.fundickonot.model.Note;
 import com.blu4ck.fundickonot.model.OttomanLetterCategory;
+import com.blu4ck.fundickonot.remote.NoteService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.time.LocalDateTime;
 
 public class EditController {
-
     @FXML private TextField noteTitleField;
     @FXML private TextArea noteContentArea;
-    @FXML private Button uploadImageButton;
     @FXML private Label imagePathLabel;
     @FXML private ComboBox<OttomanLetterCategory> letterCategoryComboBox;
-    @FXML private HBox categoryBox;
+    @FXML private Button uploadImageButton;
 
     private Note note;
-    private String selectedImagePath;
+    private String accessToken; // 🔐
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     public void setNote(Note note) {
         this.note = note;
 
+        System.out.println("📦 Güncellenmeye gelen notun ID'si: " + note.getId());
         noteTitleField.setText(note.getTitle());
         noteContentArea.setText(note.getContent());
+        imagePathLabel.setText(note.getImageUrl() != null ? "📷" : "");
 
-        if (note.getImagePath() != null && !note.getImagePath().isEmpty()) {
-            selectedImagePath = note.getImagePath();
-            imagePathLabel.setText("📷 Yüklü");
-        }
-
-        if (note.getFolderType().equals("words")) {
-            categoryBox.setVisible(true);
-            categoryBox.setManaged(true);
+        if ("words".equals(note.getFolderType())) {
             letterCategoryComboBox.setItems(FXCollections.observableArrayList(OttomanLetterCategory.values()));
-            letterCategoryComboBox.setValue(OttomanLetterCategory.valueOf(note.getCategory()));
+            letterCategoryComboBox.getSelectionModel().select(OttomanLetterCategory.valueOf(note.getCategory()));
+            letterCategoryComboBox.setVisible(true);
+            letterCategoryComboBox.setManaged(true);
         } else {
-            categoryBox.setVisible(false);
-            categoryBox.setManaged(false);
+            letterCategoryComboBox.setVisible(false);
+            letterCategoryComboBox.setManaged(false);
         }
     }
 
     @FXML
-    void handleUpdateNote() {
-        String title = noteTitleField.getText().trim();
-        String content = noteContentArea.getText().trim();
+    private void handleCancel() {
+        closeWindow();
+    }
 
-        if (title.isEmpty() || content.isEmpty()) {
+    @FXML
+    private void handleUpdateNote() {
+        String newTitle = noteTitleField.getText().trim();
+        String newContent = noteContentArea.getText().trim();
+
+        if (newTitle.isEmpty() || newContent.isEmpty()) {
             showAlert("Başlık ve içerik boş olamaz!");
             return;
         }
 
-        note.setTitle(title);
-        note.setContent(content);
-        note.setImagePath(selectedImagePath);
-        note.setCreatedAt(LocalDateTime.now()); // isteğe bağlı
+        note.setTitle(newTitle);
+        note.setContent(newContent);
 
-        if (note.getFolderType().equals("words")) {
+        if ("words".equals(note.getFolderType())) {
             OttomanLetterCategory selectedCategory = letterCategoryComboBox.getValue();
             if (selectedCategory == null) {
-                showAlert("Lütfen bir Osmanlı harf kategorisi seçiniz.");
+                showAlert("Lütfen kategori seçiniz.");
                 return;
             }
             note.setCategory(selectedCategory.name());
         }
 
-        boolean success = NoteDatabase.updateNote(note);
+        System.out.println("🛠 Güncellenmek istenen not ID: " + note.getId());
 
-        if (success) {
-            closeWindow();
-        } else {
-            showAlert("Not güncellenemedi.");
+        boolean success = NoteService.updateNote(note, accessToken);
+        if (!success) {
+            showAlert("Not güncellenirken hata oluştu.");
         }
+        closeWindow();
     }
 
+
     @FXML
-    void handleImageUpload() {
+    private void handleImageUpload() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Görsel Seç");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Resim Dosyaları", "*.png", "*.jpg", "*.jpeg", "*.gif")
         );
-
-        File file = fileChooser.showOpenDialog(noteTitleField.getScene().getWindow());
-        if (file != null) {
-            selectedImagePath = file.getAbsolutePath();
-            imagePathLabel.setText("📷 Güncellendi");
+        File selectedFile = fileChooser.showOpenDialog(noteTitleField.getScene().getWindow());
+        if (selectedFile != null) {
+            note.setImageUrl(selectedFile.getAbsolutePath());
+            imagePathLabel.setText("📷");
             uploadImageButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
         }
     }
 
-    @FXML
-    void handleCancel() {
-        closeWindow();
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private void closeWindow() {
         Stage stage = (Stage) noteTitleField.getScene().getWindow();
         stage.close();
-    }
-
-    private void showAlert(String msg) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
     }
 }

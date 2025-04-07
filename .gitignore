@@ -1,42 +1,27 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
-*.iml
-*.ipr
-/target
-/out
-*.db
+# Java derleme çıktıları
+/out/
+/target/
 *.class
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# IntelliJ IDEA
+.idea/
+*.iml
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# VS Code
 .vscode/
 
-### Mac OS ###
+# Sistem dosyaları
 .DS_Store
+Thumbs.db
+
+# Ayar, temp ve log dosyaları
+*.log
+*.tmp
+*.bak
+
+# Maven özel
+.mvn/
+dependency-reduced-pom.xml
+
+# Config dosyası
+config.properties

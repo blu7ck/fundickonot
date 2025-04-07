@@ -1,7 +1,7 @@
 package com.blu4ck.fundickonot.controller;
 
-import com.blu4ck.fundickonot.data.NoteDatabase;
 import com.blu4ck.fundickonot.model.Note;
+import com.blu4ck.fundickonot.remote.NoteService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,55 +22,62 @@ import java.io.IOException;
 import java.util.*;
 
 public class AppController {
+
+    @FXML private Accordion accordion;
+    @FXML private ListView<String> noteListView;
+    @FXML private TextArea noteContentArea;
     @FXML private ScrollPane imagePreview;
     @FXML private ImageView noteImageView;
-    @FXML private Accordion accordion;
-    @FXML private Button WordsButton;
-    @FXML private Button notesButton;
-    @FXML private Button createNoteButton;
-    @FXML private Button deleteNoteButton;
-    @FXML private Button editeNoteButton;
     @FXML private TextField searchField;
     @FXML private ToggleButton toggleMode;
 
-    @FXML private ListView<String> noteListView;
-    @FXML private TextArea noteContentArea;
     private boolean isDarkMode = false;
-
-
     private String currentFolderType = "notes";
     private ObservableList<Note> currentNotes = FXCollections.observableArrayList();
     private Note selectedNote;
+    private String userId;
+    private String accessToken;
+
+    public void setUserContext(String userId, String accessToken) {
+        this.userId = userId;
+        this.accessToken = accessToken;
+        System.out.println("✅ AppController - Kullanıcı ID ve Token alındı");
+        loadNotes();
+    }
 
     @FXML
     public void initialize() {
-        loadNotes();
-
         noteListView.setOnMouseClicked(this::handleNoteSelection);
-
-        searchField.setOnKeyReleased(event -> handleSearch());
+        searchField.setOnKeyReleased(e -> handleSearch());
     }
+
     private void loadNotes() {
         selectedNote = null;
         noteContentArea.clear();
         imagePreview.setContent(null);
-        noteImageView.setImage(null);
         noteListView.getSelectionModel().clearSelection();
 
-        currentNotes.setAll(NoteDatabase.getAllNotes(currentFolderType));
+        if (userId == null || accessToken == null) return;
 
-        boolean isWords = currentFolderType.equals("words");
+        List<Note> notes = NoteService.getNotes(userId, accessToken);
+        if (notes == null || notes.isEmpty()) {
+            noteListView.setItems(FXCollections.observableArrayList("Not bulunamadı"));
+            accordion.getPanes().clear();
+            return;
+        }
 
-        if (isWords) {
+        currentNotes.setAll(notes.stream()
+                .filter(n -> currentFolderType.equals(n.getFolderType()))
+                .toList());
+
+        if (currentFolderType.equals("words")) {
             showNotesGroupedByCategory(currentNotes);
         } else {
             showNotesInListView(currentNotes);
         }
 
-        accordion.setVisible(isWords);
-        accordion.setManaged(isWords);
-        noteListView.setVisible(!isWords);
-        noteListView.setManaged(!isWords);
+        accordion.setVisible(currentFolderType.equals("words"));
+        noteListView.setVisible(currentFolderType.equals("notes"));
     }
 
     private void showNotesInListView(List<Note> notes) {
@@ -78,109 +85,112 @@ public class AppController {
         for (Note note : notes) {
             titles.add(note.getTitle());
         }
+        if (titles.isEmpty()) {
+            titles.add("Not bulunamadı");
+        }
         noteListView.setItems(titles);
     }
 
-
     private void showNotesGroupedByCategory(List<Note> wordNotes) {
         Map<String, List<Note>> grouped = new HashMap<>();
-
-        // notları kategorilere göre grupluyoruz
         for (Note note : wordNotes) {
-            String category = note.getCategory();
+            String category = Optional.ofNullable(note.getCategory()).orElse("Kategori Yok");
             grouped.putIfAbsent(category, new ArrayList<>());
             grouped.get(category).add(note);
         }
 
-        accordion.getPanes().clear(); // varsa önce temizle
+        accordion.getPanes().clear();
 
-        for (String category : grouped.keySet()) {
+        for (Map.Entry<String, List<Note>> entry : grouped.entrySet()) {
             VBox contentBox = new VBox(10);
             contentBox.setPadding(new Insets(10));
 
-            for (Note note : grouped.get(category)) {
+            for (Note note : entry.getValue()) {
                 Hyperlink link = new Hyperlink(note.getTitle());
-                link.setOnAction(e -> showNoteDetails(note)); // tıklanınca içeriği göster
+                link.setOnAction(e -> showNoteDetails(note));
                 contentBox.getChildren().add(link);
             }
 
-            TitledPane pane = new TitledPane(category, contentBox);
+            TitledPane pane = new TitledPane(entry.getKey(), contentBox);
             accordion.getPanes().add(pane);
         }
     }
 
     private void showNoteDetails(Note note) {
-        // Önce alanları temizle
+        selectedNote = note;
         noteContentArea.clear();
         imagePreview.setContent(null);
-        selectedNote = note;
 
-        // Metin alanı
-        if (note.getContent() != null && !note.getContent().isEmpty()) {
+        if (note.getContent() != null) {
             noteContentArea.setText(note.getContent());
         }
 
-        // Görsel alanı
-        if (note.getImagePath() != null && !note.getImagePath().isEmpty()) {
-            File file = new File(note.getImagePath());
+        String imagePath = note.getImageUrl();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            Image image;
+            File file = new File(imagePath);
             if (file.exists()) {
-                Image image = new Image(file.toURI().toString(), false);
-                ImageView imageView = new ImageView(image);
-                imageView.setPreserveRatio(true);
-                imageView.setSmooth(true);
-                imagePreview.setPannable(true);
-                imagePreview.setContent(imageView);
+                image = new Image(file.toURI().toString());
             } else {
-                // Görsel dosyası bulunamadıysa hiçbir şey gösterme
-                imagePreview.setContent(null);
+                image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/assets/default_image.png")));
             }
+            ImageView imageView = new ImageView(image);
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(300);
+            imageView.setSmooth(true);
+            imagePreview.setContent(imageView);
         }
     }
-
-
-
 
     private void handleNoteSelection(MouseEvent event) {
         int index = noteListView.getSelectionModel().getSelectedIndex();
         if (index >= 0 && index < currentNotes.size()) {
             selectedNote = currentNotes.get(index);
-            noteContentArea.setText(selectedNote.getContent());
-
-            if (selectedNote.getImagePath() != null && !selectedNote.getImagePath().isEmpty()) {
-                try {
-                    File imageFile = new File(selectedNote.getImagePath());
-                    if (imageFile.exists()) {
-                        Image image = new Image(imageFile.toURI().toString(), 0, 0, true, true); // orijinal boyut
-                        noteImageView.setImage(image);
-                    } else {
-                        noteImageView.setImage(null);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    noteImageView.setImage(null);
-                }
-            } else {
-                noteImageView.setImage(null);
-            }
+            showNoteDetails(selectedNote);
         }
-        }
-
+    }
 
     @FXML
     private void handleCreateNote() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/create/createDialog.fxml"));
             AnchorPane pane = loader.load();
+            CreateController controller = loader.getController();
+            controller.setAccessToken(accessToken); // 🔑 token'ı ilet
             Stage dialog = new Stage();
             dialog.setScene(new Scene(pane));
-            dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.setTitle("Yeni Not");
+            dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.showAndWait();
-            loadNotes(); // not eklendiyse listeyi yenile
+            loadNotes();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void handleEditNote() {
+        if (selectedNote == null) return;
+        try {
+            System.out.println("✏️ Düzenlenmek üzere seçilen not ID: " + selectedNote.getId()); // 🔍 Log eklendi
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/edit/editDialog.fxml"));
+            AnchorPane pane = loader.load();
+            EditController controller = loader.getController();
+            controller.setNote(selectedNote); // 👈 id burada null olabilir
+            controller.setAccessToken(accessToken);
+
+            Stage dialog = new Stage();
+            dialog.setScene(new Scene(pane));
+            dialog.setTitle("Notu Düzenle");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.showAndWait();
+            loadNotes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
     private void handleDeleteNote() {
@@ -189,32 +199,27 @@ public class AppController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Notu Sil");
         alert.setHeaderText(null);
-        alert.setContentText("Bu notu silmek istediğinize emin misiniz?");
+        alert.setContentText("Seçilen notu silmek istediğinize emin misiniz?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            NoteDatabase.deleteNote(selectedNote.getId());
+            NoteService.deleteNote(selectedNote.getId(), accessToken); // 🔑 token'lı çağrı
             loadNotes();
-            noteContentArea.clear();
-            imagePreview.setContent(null);
-            selectedNote = null;
         }
     }
-
 
     @FXML
     private void handleSearch() {
         String query = searchField.getText().trim();
         if (!query.isEmpty()) {
-            List<Note> results = NoteDatabase.searchNotes(query, currentFolderType);
-            currentNotes.setAll(results);
-            ObservableList<String> titles = FXCollections.observableArrayList();
-            for (Note note : currentNotes) {
-                titles.add(note.getTitle());
+            List<Note> results = NoteService.searchNotes(userId, query, currentFolderType, accessToken); // 🔑 token'lı çağrı
+            if (currentFolderType.equals("words")) {
+                showNotesGroupedByCategory(results);
+            } else {
+                showNotesInListView(results);
             }
-            noteListView.setItems(titles);
         } else {
-            loadNotes(); // boş arama = tüm notlar
+            loadNotes();
         }
     }
 
@@ -236,39 +241,10 @@ public class AppController {
         if (scene == null) return;
 
         isDarkMode = !isDarkMode;
-
         scene.getStylesheets().clear();
 
-        if (isDarkMode) {
-            scene.getStylesheets().add(getClass().getResource("/views/app/dark_theme.css").toExternalForm());
-            toggleMode.setText("🌙");
-        } else {
-            scene.getStylesheets().add(getClass().getResource("/views/app/light_theme.css").toExternalForm());
-            toggleMode.setText("🔅");
-        }
+        String style = isDarkMode ? "dark_theme.css" : "light_theme.css";
+        scene.getStylesheets().add(getClass().getResource("/styles/" + style).toExternalForm());
+        toggleMode.setText(isDarkMode ? "🌙" : "🔅");
     }
-
-    @FXML
-    private void handleEditNote() {
-        if (selectedNote == null) return;
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/edit/editDialog.fxml"));
-            AnchorPane pane = loader.load();
-            EditController controller = loader.getController();
-            controller.setNote(selectedNote);
-
-            Stage dialog = new Stage();
-            dialog.setScene(new Scene(pane));
-            dialog.setTitle("Notu Düzenle");
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.showAndWait();
-
-            loadNotes(); // güncel listeyi getir
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
 }
